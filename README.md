@@ -1,90 +1,56 @@
-# Component MyComponent
+# quasar-json-api
 
-<img src="https://img.shields.io/npm/v/mixin.svg?label=mixin">
+<img src="https://img.shields.io/npm/v/quasar-json-api.svg?label=quasar-json-api">
 
-# Component MyComponent
-> Short description of the component
+![quasar-json-api](https://img.shields.io/npm/v/quasar-json-api.svg?label=quasar-json-api)
+[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hawkeye64/quasar-json-api.svg)]()
+[![GitHub repo size in bytes](https://img.shields.io/github/repo-size/hawkeye64/quasar-json-api.svg)]()
+[![npm](https://img.shields.io/npm/dt/quasar-json-api.svg)](https://www.npmjs.com/package/quasar-json-api)
+
+# Description
+The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, Mixin or Plugin.
+
+The output of the results will be placed in the **dist/api** folder.
 
 
 # Usage
 
-## Quasar CLI project
+Before proceeding, make sure you are using the Quasar build system from the **UI** kit.
+
+```bash
+$ yarn add --dev quasar-json-api
+```
+
+In your `build` folder, create a file called: `build.api.js`
+
+Add the following to it:
 
 ```js
-import Vue from 'vue'
-import Plugin from 'mixin'
+const path = require('path')
+global.rootDir = path.resolve(__dirname, '..')
+global.distDir = path.resolve(__dirname, '../dist')
 
-Vue.use(Plugin)
+require('quasar-json-api')()
 ```
 
-or:
+In your `build/script.javascript` find the `build(builds)` command and modify as follows:
 
 ```js
-<script>
-import { Component } from 'mixin'
-
-export default {
-  components: {
-    Component
-  }
-}
-</script>
+build(builds)
+  .then(() => {
+    require('./build.api')
+  })
 ```
 
-## UMD variant
+That's it!
 
-Exports `window.mixin`.
+When you build your Component or Directive via `yarn build`, your JSON API will be Normalized and Validated and the output will be placed at `dist/api`.
 
-Add the following tag(s) after the Quasar ones:
-
-```html
-<head>
-  <!-- AFTER the Quasar stylesheet tags: -->
-  <link href="https://cdn.jsdelivr.net/npm/mixin/dist/index.min.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-  <!-- at end of body, AFTER Quasar script(s): -->
-  <script src="https://cdn.jsdelivr.net/npm/mixin/dist/index.umd.min.js"></script>
-</body>
-```
-If you need the RTL variant of the CSS, then go for the following (instead of the above stylesheet link):
-```html
-<link href="https://cdn.jsdelivr.net/npm/mixin/dist/index.rtl.min.css" rel="stylesheet" type="text/css">
-```
-
-# Setup
-```bash
-$ yarn
-```
-
-# Developing
-```bash
-# start dev in SPA mode
-$ yarn dev
-
-# start dev in UMD mode
-$ yarn dev:umd
-
-# start dev in SSR mode
-$ yarn dev:ssr
-
-# start dev in Cordova iOS mode
-$ yarn dev:ios
-
-# start dev in Cordova Android mode
-$ yarn dev:android
-
-# start dev in Electron mode
-$ yarn dev:electron
-```
-
-# Building package
-```bash
-$ yarn build
-```
+# JSON API
+**TODO**
 
 # Donate
-If you appreciate the work that went into this, please consider [donating to Quasar](https://donate.quasar.dev).
+If you appreciate the work that went into this, please consider donating to [Quasar](https://donate.quasar.dev) or [Jeff](https://github.com/sponsors/hawkeye64).
 
 # License
-MIT (c) Razvan Stoenescu <razvan.stoenescu@gmail.com>
+MIT (c) Jeff Galbraith <jeff@quasar.dev>
