@@ -31,7 +31,7 @@ global.distDir = path.resolve(__dirname, '../dist')
 require('quasar-json-api')()
 ```
 
-In your `build/script.javascript` find the `build(builds)` command and modify as follows:
+In your `build/script.javascript.js` find the `build(builds)` command and modify as follows:
 
 ```js
 build(builds)
@@ -42,7 +42,7 @@ build(builds)
 
 That's it!
 
-When you build your Component or Directive via `yarn build`, your JSON API will be Normalized and Validated and the output will be placed at `dist/api`.
+When you build your Component or Directive via `yarn build` (from your UI kit templated package), your JSON API will be **Normalized** and **Validated** and the output will be placed in the `dist/api` folder.
 
 # JSON API
 **TODO**
