@@ -1,13 +1,11 @@
 const
   glob = require('glob'),
   path = require('path'),
-  // merge = require('webpack-merge'),
   fs = require('fs'),
   { logError, writeFile } = require('./build.utils'),
   ast = require('./ast')
 
 const
-  // root = path.resolve(__dirname, '..'),
   root = global.rootDir,
   resolvePath = file => path.resolve(root, file),
   dest = path.join(root, 'dist/api'),

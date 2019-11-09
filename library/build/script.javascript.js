@@ -20,14 +20,106 @@ const rollupPlugins = [
 ]
 
 const builds = [
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/index.js`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/index.esm.js`),
+  //       format: 'es'
+  //     }
+  //   },
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/api.extends.json`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/api.extends.json`),
+  //       format: 'es'
+  //     }
+  //   },
+  //   plugins: [ json() ],
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/ast.js`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/ast.js`),
+  //       format: 'es'
+  //     }
+  //   },
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/build.api.js`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/build.api.js`),
+  //       format: 'es'
+  //     },
+  //     plugins: [ json() ]
+  //   },
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/build.utils.js`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/build.utils.js`),
+  //       format: 'es'
+  //     }
+  //   },
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
+  // {
+  //   rollup: {
+  //     input: {
+  //       input: resolve(`../src/script.clean.js`)
+  //     },
+  //     output: {
+  //       file: resolve(`../dist/script.clean.js`),
+  //       format: 'es'
+  //     }
+  //   },
+  //   build: {
+  //     // unminified: true,
+  //     minified: true
+  //   }
+  // },
   {
     rollup: {
       input: {
         input: resolve(`../src/index.js`)
       },
       output: {
-        file: resolve(`../dist/index.esm.js`),
-        format: 'es'
+        file: resolve(`../dist/index.common.js`),
+        format: 'cjs'
       }
     },
     build: {
@@ -38,10 +130,10 @@ const builds = [
   {
     rollup: {
       input: {
-        input: resolve(`../src/index.js`)
+        input: resolve(`../src/ast.js`)
       },
       output: {
-        file: resolve(`../dist/index.common.js`),
+        file: resolve(`../dist/ast.js`),
         format: 'cjs'
       }
     },
@@ -70,13 +162,13 @@ function build (builds) {
 
 function genConfig (opts) {
   Object.assign(opts.rollup.input, {
-    plugins: rollupPlugins,
-    external: [ 'vue', 'quasar' ]
+    plugins: rollupPlugins
+    // external: [ 'vue', 'quasar' ]
   })
 
   Object.assign(opts.rollup.output, {
-    banner: buildConf.banner,
-    globals: { vue: 'Vue', quasar: 'Quasar' }
+    banner: buildConf.banner
+    // globals: { vue: 'Vue', quasar: 'Quasar' }
   })
 
   return opts
@@ -92,9 +184,7 @@ function buildEntry (config) {
     .rollup(config.rollup.input)
     .then(bundle => bundle.generate(config.rollup.output))
     .then(({ output }) => {
-      const code = config.rollup.output.format === 'umd'
-        ? injectVueRequirement(output[0].code)
-        : output[0].code
+      const code = output[0].code
 
       return config.build.unminified
         ? buildUtils.writeFile(config.rollup.output.file, code)
@@ -127,22 +217,4 @@ function buildEntry (config) {
       console.error(err)
       process.exit(1)
     })
-}
-
-function injectVueRequirement (code) {
-  const index = code.indexOf(`Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue`)
-
-  if (index === -1) {
-    return code
-  }
-
-  const checkMe = ` if (Vue === void 0) {
-    console.error('[ Quasar ] Vue is required to run. Please add a script tag for it before loading Quasar.')
-    return
-  }
-  `
-
-  return code.substring(0, index - 1) +
-    checkMe +
-    code.substring(index)
 }

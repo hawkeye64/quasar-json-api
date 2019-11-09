@@ -1,6 +1,6 @@
 /build
 /dev
-/src
+/dist
 
 .DS_Store
 .thumbs.db

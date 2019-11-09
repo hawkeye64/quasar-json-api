@@ -1,11 +1,6 @@
 const
-  type = process.argv[2],
-  parallel = require('os').cpus().length > 1,
-  // { join } = require('path'),
   path = require('path'),
-  { createFolder } = require('./build.utils'),
-  runJob = parallel ? require('child_process').fork : require,
-  { green, blue, red } = require('chalk')
+  { createFolder } = require('./build.utils')
 
 module.exports = function () {
   if (global.rootDir === void 0) {
