@@ -1,7 +1,5 @@
 # quasar-json-api
 
-<img src="https://img.shields.io/npm/v/quasar-json-api.svg?label=quasar-json-api">
-
 ![quasar-json-api](https://img.shields.io/npm/v/quasar-json-api.svg?label=quasar-json-api)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hawkeye64/quasar-json-api.svg)]()
 [![GitHub repo size in bytes](https://img.shields.io/github/repo-size/hawkeye64/quasar-json-api.svg)]()
