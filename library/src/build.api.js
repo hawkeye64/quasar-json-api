@@ -459,7 +459,8 @@ function fillAPI (apiType) {
   return file => {
     const
       name = path.basename(file),
-      filePath = path.join(dest, name)
+      filePath = path.join(dest, name),
+      hasError = false
 
     const api = orderAPI(parseAPI(file, apiType), apiType)
 
@@ -489,9 +490,15 @@ function fillAPI (apiType) {
 
         if (api[prop] === void 0 || api[prop][key] === void 0) {
           logError(`${name}: missing "${prop}" -> "${key}" definition`)
-          process.exit(1)
+          hasError = true
+          // keep looping through to find as many as can be found can before exiting
         }
       })
+    }
+
+    if (hasError === true) {
+      logError(`Errors were found...exiting`)
+      process.exit(1)
     }
 
     // copy API file to dest
