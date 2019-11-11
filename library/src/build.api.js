@@ -36,7 +36,7 @@ function getMixedInAPI (api, mainFile) {
 
 const topSections = {
   plugin: [ 'injection', 'quasarConfOptions', 'props', 'methods' ],
-  component: [ 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods', 'computed' ],
+  component: [ 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods' ],
   directive: [ 'value', 'arg', 'modifiers' ]
 }
 
@@ -183,12 +183,6 @@ const objectTypes = {
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
     isObject: [ 'params', 'returns' ]
-  },
-
-  computed: {
-    props: [ 'desc', 'link', 'addedIn', 'applicable' ],
-    required: [ 'desc' ],
-    isObject: [ 'returns' ]
   },
 
   // plugin only
