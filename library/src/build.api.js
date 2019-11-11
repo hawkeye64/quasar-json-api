@@ -186,10 +186,9 @@ const objectTypes = {
   },
 
   computed: {
-    props: [ 'tsInjectionPoint', 'desc', 'link', 'params', 'returns', 'addedIn', 'applicable' ],
+    props: [ 'desc', 'link', 'addedIn', 'applicable' ],
     required: [ 'desc' ],
-    isBoolean: [ 'tsInjectionPoint' ],
-    isObject: [ 'params', 'returns' ]
+    isObject: [ 'returns' ]
   },
 
   // plugin only
