@@ -36,7 +36,7 @@ function getMixedInAPI (api, mainFile) {
 
 const topSections = {
   plugin: [ 'injection', 'quasarConfOptions', 'props', 'methods' ],
-  component: [ 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods' ],
+  component: [ 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods', 'computed' ],
   directive: [ 'value', 'arg', 'modifiers' ]
 }
 
@@ -89,6 +89,15 @@ const objectTypes = {
   },
 
   Event: {
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    required: [ 'desc', 'examples' ],
+    recursive: [ 'definition' ],
+    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
+    isObject: [ 'definition' ],
+    isArray: [ 'examples', 'values' ]
+  },
+
+  FileList: {
     props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
