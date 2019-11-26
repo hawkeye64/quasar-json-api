@@ -401,7 +401,7 @@ function parseAPI (file, apiType) {
       parseObject({
         banner: `${banner} "${type}"`,
         api,
-        itemName: 'quasarConfOptions',
+        itemName: type,
         masterType: type
       })
       continue
