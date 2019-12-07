@@ -14,7 +14,6 @@ const
 
 function getMixedInAPI (api, mainFile) {
   api.mixins.forEach(mixin => {
-    console.log(mixin)
     let mixinFile
     if (mixin.charAt(0) === '~') {
       try {
