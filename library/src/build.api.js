@@ -14,10 +14,23 @@ const
 
 function getMixedInAPI (api, mainFile) {
   api.mixins.forEach(mixin => {
-    const mixinFile = resolvePath('src/' + mixin + '.json')
+    console.log(mixin)
+    let mixinFile
+    if (mixin.charAt(0) === '~') {
+      try {
+        mixinFile = mixin.slice(1) + '.json'
+        mixinFile = require.resolve(mixinFile)
+      } catch (e) {
+        logError(`⚠️  Cannot resolve mixin file: ${mixinFile}`)
+        process.exit(1)
+      }
+    }
+    else {
+      mixinFile = resolvePath('src/' + mixin + '.json')
+    }
 
     if (!fs.existsSync(mixinFile)) {
-      logError(`build.api.js: ${path.relative(root, mainFile)} -> no such mixin ${mixin}`)
+      logError(`⚠️  ${path.relative(root, mainFile)} -> no such mixin ${mixin}`)
       process.exit(1)
     }
 
