@@ -50,7 +50,8 @@ function getMixedInAPI (api, mainFile) {
 const topSections = {
   plugin: [ 'meta', 'injection', 'quasarConfOptions', 'props', 'methods' ],
   component: [ 'meta', 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods' ],
-  directive: [ 'meta', 'value', 'arg', 'modifiers' ]
+  directive: [ 'meta', 'value', 'arg', 'modifiers' ],
+  util: [ 'meta', 'methods', 'constants' ]
 }
 
 const objectTypes = {
@@ -545,10 +546,14 @@ module.exports.generate = function () {
       .map(fillAPI('directive'))
 
     const components = glob.sync(resolvePath('src/components/**/*.json'))
-      .filter(file => !path.basename(file).startsWith('__'))
-      .map(fillAPI('component'))
+    .filter(file => !path.basename(file).startsWith('__'))
+    .map(fillAPI('component'))
 
-    resolve({ components, directives, plugins })
+    const utils = glob.sync(resolvePath('src/utils/**/*.json'))
+    .filter(file => !path.basename(file).startsWith('__'))
+    .map(fillAPI('util'))
+
+    resolve({ components, directives, plugins, utils })
   }).catch(err => {
     logError(`build.api.js: something went wrong...`)
     console.log()
