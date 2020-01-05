@@ -1,13 +1,20 @@
 {
   "name": "quasar-json-api",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "Jeff Galbraith <jeff@quasar.dev>",
   "description": "Normalizes and validates JSON API for 3rd-party Quasar Components, Directives, Mixins and Plugins uing the Quasar UI Kit",
   "license": "MIT",
   "module": "src/index.js",
   "main": "src/index.js",
   "scripts": {
-    "build": "node build/index.js"
+    "lint": "eslint --ext .js src"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/hawkeye64"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "quasar",
@@ -18,32 +25,17 @@
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/hawkeye64/quasar-json-api.git"
   },
-  "bugs": "",
-  "homepage": "",
-  "dependencies": {
-    "@rollup/plugin-buble": "^0.20.0",
-    "@rollup/plugin-json": "^4.0.0",
-    "autoprefixer": "^9.7.3",
-    "babylon": "^6.18.0",
-    "chalk": "^3.0.0",
-    "cssnano": "^4.1.10",
-    "node-sass": "^4.13.0",
-    "open": "^7.0.0",
-    "postcss": "^7.0.24",
-    "postcss-rtl": "^1.5.0",
-    "quasar": "^1.5.5",
-    "recast": "^0.18.5",
-    "rimraf": "^3.0.0",
-    "rollup": "^1.27.8",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "uglify-es": "^3.3.9",
-    "webpack-merge": "^4.2.2",
-    "zlib": "^1.0.5"
-  },
-  "browserslist": [
-    "last 1 version, not dead, ie >= 11"
-  ]
+  "bugs": "https://github.com/hawkeye64/quasar-json-api/issues",
+  "homepage": "https://github.com/hawkeye64/quasar-json-api",
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
 }

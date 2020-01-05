@@ -44,7 +44,7 @@ That's it!
 
 When you build your Component or Directive via `yarn build` (from your UI kit templated package), your JSON API will be **Normalized** and **Validated** and the output will be placed in the `dist/api` folder.
 
-One more item to disclose. The JSON file should have the same name as your component so it can validate against it after the normalization is done.
+One more item to disclose. The JSON file should have the same name as your component so it can validate against the source after the normalization is done.
 
 For instance, if your component or directive is **MyComponent.js**, then your JSON API file will be called **MyComponent.json**.
 
