@@ -85,10 +85,14 @@ You will see an error like this if you are missing a required property:
 [Error] build.api.js: src/components/MyComponent.json ->  "props"/"items" missing required API prop "category" for its type (Array)
 ```
 
-Here is another commen error:
+In this case, the JSON API item needs **category: ""**
+
+Here is another common error:
 ```
 [Error] build.api.js: src/components/MyComponent.json ->  "props"/"error-color" missing required API prop "examples" for its type (String)
 ```
+
+In this case, the JSON API item needs **examples: []**
 
 ## Validation
 Validation is done after the JSON file is processed.
@@ -97,6 +101,8 @@ The code will check your declared props against the associated source file. If t
 ```
 [Error] MyComponent.json: missing "props" -> "some-prop" definition
 ```
+
+This means, your code has, in **props**, a property of **some-prop** that is missing from your JSON API and it should be documented.
 
 Another validation error you might see is:
 ```
