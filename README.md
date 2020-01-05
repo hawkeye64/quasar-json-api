@@ -106,7 +106,7 @@ This means, your code has, in **props**, a property of **some-prop** that is mis
 
 Another validation error you might see is:
 ```
-Error] MyComponent.json: missing "methods" -> "renderComponent" definition
+[Error] MyComponent.json: missing "methods" -> "renderComponent" definition
 ```
 All functions are validated against the source. Non-public functions should start with two underscores (`__`). All public functions should be decribed in your JSON API.
 
