@@ -1,6 +1,6 @@
 {
   "name": "quasar-json-api",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "author": "Jeff Galbraith <jeff@quasar.dev>",
   "description": "Normalizes and validates JSON API for 3rd-party Quasar Components, Directives, Mixins and Plugins uing the Quasar UI Kit",
   "license": "MIT",
@@ -37,5 +37,14 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
+  },
+  "dependencies": {
+    "babylon": "^6.18.0",
+    "chalk": "^3.0.0",
+    "glob": "^7.1.6",
+    "recast": "^0.18.5",
+    "rimraf": "^3.0.0",
+    "webpack-merge": "^4.2.2",
+    "zlib": "^1.0.5"
   }
 }
