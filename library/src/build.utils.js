@@ -9,7 +9,8 @@ function getSize (code) {
   return (code.length / 1024).toFixed(2) + 'kb'
 }
 
-module.exports.createFolder = function (dir) {
+module.exports.createFolder = function (folder) {
+  const dir = path.join(__dirname, '..', folder)
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }

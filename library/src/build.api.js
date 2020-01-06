@@ -1,15 +1,15 @@
 const
   glob = require('glob'),
   path = require('path'),
-  fs = require('fs'),
-  merge = require('webpack-merge')
+  merge = require('webpack-merge'),
+  fs = require('fs')
 
 const
   root = global.rootDir,
   resolvePath = file => path.resolve(root, file),
   dest = path.join(root, 'dist/api'),
   extendApi = require('./api.extends.json'),
-  { logError, writeFile } = require('./build.utils'),
+  { logError, writeFile, kebabCase } = require('./build.utils'),
   ast = require('./ast')
 
 function getMixedInAPI (api, mainFile) {
@@ -63,9 +63,9 @@ const objectTypes = {
   },
 
   String: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'transformAssetUrls', 'applicable' ],
     required: [ 'desc', 'examples' ],
-    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
+    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync', 'transformAssetUrls' ],
     isArray: [ 'examples', 'values' ]
   },
 
@@ -268,7 +268,6 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
     }
 
     if (!def.props.includes(prop)) {
-      console.log(def)
       logError(`${banner} object has unrecognized API prop "${prop}" for its type (${type})`)
       console.error(obj)
       console.log()
@@ -475,7 +474,29 @@ const astExceptions = global.astExceptions || {
   'QField.json': {
     props: {
       maxValues: true
+    },
+    slots: {
+      rawControl: true
     }
+  }
+}
+
+function arrayHasError (name, key, property, expected, propApi) {
+  const apiVal = propApi[property]
+
+  if (expected.length === 1 && expected[0] === apiVal) {
+    return
+  }
+
+  const expectedVal = expected.filter(t => t.startsWith('__') === false)
+
+  if (
+    !Array.isArray(apiVal) ||
+    apiVal.length !== expectedVal.length ||
+    !expectedVal.every(t => apiVal.includes(t))
+  ) {
+    logError(`${name}: wrong definition for prop "${key}" on "${property}": expected ${expectedVal} but found ${apiVal}`)
+    return true
   }
 }
 
@@ -483,17 +504,37 @@ function fillAPI (apiType) {
   return file => {
     const
       name = path.basename(file),
-      filePath = path.join(dest, name),
-      hasError = false
+      filePath = path.join(dest, name)
 
     const api = orderAPI(parseAPI(file, apiType), apiType)
 
     if (apiType === 'component') {
+      let hasError = false
+
       const definition = fs.readFileSync(file.replace('.json', '.js'), {
         encoding: 'utf-8'
       })
 
-      ast.evaluate(definition, topSections[apiType], (prop, key) => {
+      const slotRegex = /(this\.\$scopedSlots\[['`](\S+)['`]\]|slot\(this, '(\S+)'|this\.\$scopedSlots\.([A-Za-z]+)\()/g
+      let slotMatch
+      while ((slotMatch = slotRegex.exec(definition)) !== null) {
+        const slotName = (slotMatch[2] || slotMatch[3] || slotMatch[4]).replace(/(\${.+})/g, '[name]')
+
+        if (
+          astExceptions[name] !== void 0 &&
+          astExceptions[name].slots !== void 0 &&
+          astExceptions[name].slots[slotName] === true
+        ) {
+          continue
+        }
+
+        if (!(api.slots || {})[slotName] && !(api.scopedSlots || {})[slotName]) {
+          logError(`${name}: missing "slot|scopedSlots" -> "${slotName}" definition`)
+          hasError = true // keep looping through to find as many as can be found before exiting
+        }
+      }
+
+      ast.evaluate(definition, topSections[apiType], (prop, key, definition) => {
         if (key.startsWith('__')) {
           return
         }
@@ -514,15 +555,51 @@ function fillAPI (apiType) {
 
         if (api[prop] === void 0 || api[prop][key] === void 0) {
           logError(`${name}: missing "${prop}" -> "${key}" definition`)
-          hasError = true
-          // keep looping through to find as many as can be found can before exiting
+          hasError = true // keep looping through to find as many as can be found before exiting
+        }
+
+        if (definition) {
+          const propApi = api[prop][key]
+          if (typeof definition === 'string' && propApi.type !== definition) {
+            logError(`${name}: wrong definition for prop "${key}": expected "${definition}" but found "${propApi.type}"`)
+            hasError = true // keep looping through to find as many as can be found before exiting
+          }
+          else if (Array.isArray(definition)) {
+            if (arrayHasError(name, key, 'type', definition, propApi)) {
+              hasError = true // keep looping through to find as many as can be found before exiting
+            }
+          }
+          else {
+            if (definition.type) {
+              if (Array.isArray(definition.type)) {
+                if (arrayHasError(name, key, 'type', definition.type, propApi)) {
+                  hasError = true
+                }
+              }
+              else if (propApi.type !== definition.type) {
+                logError(`${name}: wrong definition for prop "${key}" on "type": expected "${definition.type}" but found "${propApi.type}"`)
+                hasError = true // keep looping through to find as many as can be found before exiting
+              }
+            }
+
+            if (key !== 'value' && definition.required && Boolean(definition.required) !== propApi.required) {
+              logError(`${name}: wrong definition for prop "${key}" on "required": expected "${definition.required}" but found "${propApi.required}"`)
+              hasError = true // keep looping through to find as many as can be found before exiting
+            }
+
+            if (definition.validator && Array.isArray(definition.validator)) {
+              if (arrayHasError(name, key, 'values', definition.validator, propApi)) {
+                hasError = true // keep looping through to find as many as can be found before exiting
+              }
+            }
+          }
         }
       })
-    }
 
-    if (hasError === true) {
-      logError(`Errors were found...exiting`)
-      process.exit(1)
+      if (hasError === true) {
+        logError(`Errors were found...exiting`)
+        process.exit(1)
+      }
     }
 
     // copy API file to dest
@@ -533,6 +610,31 @@ function fillAPI (apiType) {
       api
     }
   }
+}
+
+function writeTransformAssetUrls (components) {
+  const transformAssetUrls = {}
+
+  components.forEach(({ name, api }) => {
+    if (api.props !== void 0) {
+      let props = Object.keys(api.props)
+        .filter(name => api.props[name].transformAssetUrls === true)
+
+      if (props.length > 0) {
+        props = props.length > 1
+          ? props
+          : props[0]
+
+        transformAssetUrls[name] = props
+        transformAssetUrls[kebabCase(name)] = props
+      }
+    }
+  })
+
+  writeFile(
+    path.join(root, 'dist/transform-asset-urls.json'),
+    JSON.stringify(transformAssetUrls, null, 2)
+  )
 }
 
 module.exports.generate = function () {
@@ -552,6 +654,8 @@ module.exports.generate = function () {
     const utils = glob.sync(resolvePath('src/utils/**/*.json'))
     .filter(file => !path.basename(file).startsWith('__'))
     .map(fillAPI('util'))
+
+    // writeTransformAssetUrls(components)
 
     resolve({ components, directives, plugins, utils })
   }).catch(err => {

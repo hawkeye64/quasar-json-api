@@ -12,10 +12,10 @@ module.exports = function () {
     process.exit(1)
   }
 
-  require('./script.clean.js')(global.distDir)
+  // require('./script.clean.js')(global.distDir)
 
-  createFolder(global.distDir)
-  createFolder(path.resolve(global.distDir, 'api'))
+  // createFolder('dist')
+  // createFolder('dist/api')
 
   require('./build.api').generate()
 }
