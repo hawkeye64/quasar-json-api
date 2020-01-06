@@ -31,6 +31,13 @@ global.distDir = path.resolve(__dirname, '../dist')
 require('quasar-json-api')()
 ```
 
+In your `build/index.js` find the `createFolder('dist')` command and modify as follows:
+
+```js
+createFolder('dist')
+createFolder('dist/api')
+```
+
 In your `build/script.javascript.js` find the `build(builds)` command and modify as follows:
 
 ```js
