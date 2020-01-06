@@ -42,17 +42,17 @@ function getPropDefinition (innerProp) {
         }
         else if (p.value.type === 'ArrowFunctionExpression') {
           if (p.value.body.type === 'ArrayExpression') {
-            value = `[${p.value.body.elements.map(e => e.extra.raw || e.value).join(', ')}]`
+            value = `[${p.value.body.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
           }
           else if (!p.value.body.callee || !p.value.body.callee.object || !p.value.body.callee.object.elements) {
             return ''
           }
           else {
-            value = `[${p.value.body.callee.object.elements.map(e => e.extra.raw || e.value).join(', ')}]`
+            value = `[${p.value.body.callee.object.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
           }
         }
         else if (p.value.type === 'FunctionExpression') {
-          value = `[${p.value.body.body.argument.callee.object.elements.map(e => e.extra.raw || e.value).join(', ')}]`
+          value = `[${p.value.body.body.argument.callee.object.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
         }
       }
       else {
