@@ -198,7 +198,7 @@ const objectTypes = {
   },
 
   methods: {
-    props: [ 'tsInjectionPoint', 'desc', 'link', 'params', 'returns', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'applicable' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
     isObject: [ 'params', 'returns' ]
