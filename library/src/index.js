@@ -1,7 +1,3 @@
-const
-  path = require('path'),
-  { createFolder } = require('./build.utils')
-
 module.exports = function () {
   if (global.rootDir === void 0) {
     console.log(`${red('quasar.json.api: "global.rootDir" is not set...exiting')}`)
@@ -12,10 +8,8 @@ module.exports = function () {
     process.exit(1)
   }
 
-  // require('./script.clean.js')(global.distDir)
-
-  // createFolder('dist')
-  // createFolder('dist/api')
-
-  require('./build.api').generate()
+  return require('./build.api').generate()
+    .then(data => {
+      require('./build.vetur')(data)
+  })
 }
