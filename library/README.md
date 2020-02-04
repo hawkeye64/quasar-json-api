@@ -8,7 +8,9 @@
 # Description
 The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, Mixin or Plugin.
 
-The output of the results will be placed in the **dist/api** folder.
+As well, it'll create `Vetur` compliant files, so that when using `vscode` with `vetur` you get suggestions and completions.
+
+The output of the results will be placed in the **dist/api** and **dist/vetur** folders, respectively.
 
 
 # Usage
@@ -36,6 +38,7 @@ In your `build/index.js` find the `createFolder('dist')` command and modify as f
 ```js
 createFolder('dist')
 createFolder('dist/api')
+createFolder('dist/vetur')
 ```
 
 In your `build/script.javascript.js` find the `build(builds)` command and modify as follows:
@@ -45,6 +48,15 @@ build(builds)
   .then(() => {
     require('./build.api')
   })
+```
+
+In your `package.json, add the following:
+
+```json
+  "vetur": {
+    "tags": "dist/vetur/tags.json",
+    "attributes": "dist/vetur/attributes.json"
+  },
 ```
 
 That's it!
