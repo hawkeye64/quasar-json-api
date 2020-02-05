@@ -343,9 +343,9 @@ Here is an example of describing a method:
 ```
 
 # JSON API Examples
-[QCalendar](https://raw.githubusercontent.com/quasarframework/quasar-ui-qcalendar/dev/ui/src/components/QCalendar.json)
-[QMarkdown](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmarkdown/dev/ui/src/components/QMarkdown.json)
-[QMediaPlayer](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmediaplayer/dev/ui/src/components/QMediaPlayer.json)
+- [QCalendar](https://raw.githubusercontent.com/quasarframework/quasar-ui-qcalendar/dev/ui/src/components/QCalendar.json)
+- [QMarkdown](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmarkdown/dev/ui/src/components/QMarkdown.json)
+- [QMediaPlayer](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmediaplayer/dev/ui/src/components/QMediaPlayer.json)
 
 # Donate
 If you appreciate the work that went into this, please consider donating to [Quasar](https://donate.quasar.dev) or [Jeff](https://github.com/sponsors/hawkeye64).
