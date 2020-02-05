@@ -194,7 +194,7 @@ And, here is an example of a property that is a **Function**:
   },
 ```
 
-Notice for the **params** section, we defer the required example by using **"__exemption": [ "examples" ]** instead. Soime places just don't make sense to have an example, if you have examples elsewhere for that object.
+Notice for the **params** section, we defer the required example by using **"__exemption": [ "examples" ]** instead. Some objects just don't make sense to have an example, if you have examples elsewhere for that object.
 
 Let's look at one more property that takes a Function so you get a feel for the JSON:
 ```json
