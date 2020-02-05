@@ -71,9 +71,8 @@ Notice the addition of the last line.
 Now, you can concentrate on any JSON API issues you have by running `yarn build:api`.
 
 # JSON API
-**TODO**
+Look in the [library](library) folder.
 
-# Common Errors
 
 ## Normalization
 Normalization is a check of your JSON file so that it contains all requirements.
