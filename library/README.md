@@ -323,6 +323,25 @@ When a JSON file is parsed, a corresponding JS file of the same name is located.
 
 If a described method does not include a **returns** key, then it is assumed to be **undefined**.
 
+Here is an example of describing a method:
+
+```json
+  "move": {
+    "desc": "Triggers component to move for count iterations, depending on positive (forwards) or negative (backwards) value",
+    "applicable": [ "All"],
+    "params": {
+      "count": {
+        "type": "Number",
+        "desc": "The amount of iterations to move (negative for backwards, positive for forwards)",
+        "examples": [
+          "-5 (moves 5 iterations backward - if in `month` view, this would be -5 months",
+          "5 (moves 5 iterations forward - if in `day` view, this would be 5 days"
+        ]
+      }
+    }
+  },
+```
+
 # JSON API Examples
 [QCalendar](https://raw.githubusercontent.com/quasarframework/quasar-ui-qcalendar/dev/ui/src/components/QCalendar.json)
 [QMarkdown](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmarkdown/dev/ui/src/components/QMarkdown.json)
