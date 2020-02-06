@@ -319,7 +319,7 @@ Let's describe a slot and scopedSlot:
 Notice for **scopedSlots** the use of the **scope** key.
 
 #### Methods
-When a JSON file is parsed, a corresponding JS file of the same name is located. If found, this file is also parsed. When the **methods** section is parsed, it looks for __private__ vs __public__ methods. Private methods should start with two underscores (**__**). If a method is found, that is public and not described in your JSON API, this will cause an error. Either make the method public or add a section for it in your JSON API.
+When a JSON file is parsed, a corresponding JS file of the same name is located. If found, this file is also parsed. When the **methods** section is parsed, it looks for __private__ vs __public__ methods. Private methods should start with two underscores (**__**). If a method is found, that is public and not described in your JSON API, this will cause an error. Either make the method private or add a section for it in your JSON API.
 
 If a described method does not include a **returns** key, then it is assumed to be **undefined**.
 
