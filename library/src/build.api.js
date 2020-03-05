@@ -129,6 +129,15 @@ const objectTypes = {
     isArray: [ 'examples', 'values' ]
   },
 
+  MediaElement: {
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    required: [ 'desc', 'examples' ],
+    recursive: [ 'definition' ],
+    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
+    isObject: [ 'definition' ],
+    isArray: [ 'examples', 'values' ]
+  },
+
   Promise: {
     props: [ 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'examples', 'category', 'addedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
