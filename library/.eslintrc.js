@@ -4,7 +4,7 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint',
     sourceType: 'module',
-    ecmaVersion: 2015
+    ecmaVersion: 2018
   },
 
   env: {
@@ -25,8 +25,12 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }],
+    'prefer-const': 2,
+
     // allow async-await
     'generator-star-spacing': 'off',
+
     // allow paren-less arrow functions
     'arrow-parens': 'off',
     'one-var': 'off',
@@ -40,9 +44,10 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
-    'prefer-promise-reject-errors': 'off',
 
+    'prefer-promise-reject-errors': 'off',
     'no-void': 'off',
+
     // allow console.log during development only
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // allow debugger during development only
