@@ -64,11 +64,13 @@ That's it!
 When you build your Component or Directive via `yarn build` (from your UI kit templated package), your JSON API will be **Normalized** and **Validated** and the output will be placed in the `dist/api` folder.
 
 # JSON API
+
 The JSON API can be used to simplify your component/directive by having a consistent JSON structure that can be read by several libraries. This is currently supported by Quasar's command-line via `quasar describe <component|directive>`. It is also supported by the [JSON API Viewer](https://github.com/hawkeye64/json-api-viewer) component.
 
 JSON API can be parsed for one or more Components, Directives, Plugins, or utility libraries.
 
 ## Top-Level Blocks
+
 There are several top-level blocks:
 1. meta
 2. props
@@ -76,8 +78,10 @@ There are several top-level blocks:
 4. slots
 5. scopedSlots
 6. methods
+7. computed
 
 ### Meta
+
 The **meta** object currently contains a single **docsUrl** key, which is the location to your documentation. This is used by the `quasar describe ...` command-line utility.
 
 Example:
@@ -88,6 +92,7 @@ Example:
 ```
 
 ## Anatomy of an Object
+
 An object describes a portion of your API. Let's say you want to describe a property called **backgroundColor**. You need to change any camel-case names to snake-case, so when described, this property now becomes **background-color**.
 
 Example:
@@ -119,11 +124,13 @@ Available keys for described objects are:
 12. addedIn | String
 13. params | Object
 14. returns | Any
-15. scope | Object (scopedSlots only)
+15. addedIn | String
+16. scope | Object (scopedSlots only)
 
 Not all keys are applicable to all the top-level blocks.
 
-### Types
+## Types
+
 The available types are:
 1. Boolean
 2. String
@@ -132,15 +139,17 @@ The available types are:
 5. Array
 6. Date
 7. Event
-8. FileList
-9. Map
-10. Promise
-11. Function
-12. MultipleTypes
-13. Error
-14. Component
+8. File
+9. FileList
+10. Map
+11. Promise
+12. Function
+13. MultipleTypes
+14. Error
+15. Component
 
-### Describing
+## Describing
+
 Let's look at a longer property description:
 ```json
   "sources": {
@@ -243,7 +252,7 @@ Let's look at one more property that takes a Function so you get a feel for the 
 
 Notice in the previous example, the return type was just **null**. In the example above, the return type is slightly more sophisticated.
 
-Let's describe an event:
+Let's describe an **event**:
 ```json
   "toc": {
     "desc": "If `toc` property is `true` then if a TOC is generated it is emitted via this event",
@@ -318,10 +327,11 @@ Let's describe a slot and scopedSlot:
 
 Notice for **scopedSlots** the use of the **scope** key.
 
-#### Methods
-When a JSON file is parsed, a corresponding JS file of the same name is located. If found, this file is also parsed. When the **methods** section is parsed, it looks for __private__ vs __public__ methods. Private methods should start with two underscores (**__**). If a method is found, that is public and not described in your JSON API, this will cause an error. Either make the method private or add a section for it in your JSON API.
+## Methods and Comp[uted]
 
-If a described method does not include a **returns** key, then it is assumed to be **undefined**.
+When a JSON file is parsed, a corresponding JS file of the same name is located. If found, this file is also parsed. When the **methods** or **computed** sections are parsed, it looks for __private__ vs __public__ methods. Private methods/computed should start with two underscores (**__**). If a method or computed is found, that is public and not described in your JSON API, this will cause an error. Either make the method/computed private or add a section for it in your JSON API.
+
+If a described method/computed does not include a **returns** key, then it is assumed to be **undefined**.
 
 Here is an example of describing a method:
 

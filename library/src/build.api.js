@@ -19,7 +19,8 @@ function getMixedInAPI (api, mainFile) {
       try {
         mixinFile = mixin.slice(1) + '.json'
         mixinFile = require.resolve(mixinFile)
-      } catch (e) {
+      }
+      catch (e) {
         logError(`⚠️  Cannot resolve mixin file: ${mixinFile}`)
         process.exit(1)
       }
@@ -49,7 +50,7 @@ function getMixedInAPI (api, mainFile) {
 
 const topSections = {
   plugin: [ 'meta', 'injection', 'quasarConfOptions', 'props', 'methods' ],
-  component: [ 'meta', 'quasarConfOptions', 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods' ],
+  component: [ 'meta', 'quasarConfOptions', 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods', 'computed' ],
   directive: [ 'meta', 'quasarConfOptions', 'value', 'arg', 'modifiers' ],
   util: [ 'meta', 'methods', 'constants' ]
 }
@@ -111,25 +112,7 @@ const objectTypes = {
     isArray: [ 'examples', 'values' ]
   },
 
-  FileList: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
-    required: [ 'desc', 'examples' ],
-    recursive: [ 'definition' ],
-    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
-    isObject: [ 'definition' ],
-    isArray: [ 'examples', 'values' ]
-  },
-
   Map: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
-    required: [ 'desc', 'examples' ],
-    recursive: [ 'definition' ],
-    isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
-    isObject: [ 'definition' ],
-    isArray: [ 'examples', 'values' ]
-  },
-
-  MediaElement: {
     props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
@@ -147,11 +130,11 @@ const objectTypes = {
   },
 
   Function: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'applicable', 'values' ],
     required: [ 'desc', 'params', 'returns' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'params', 'returns' ],
-    canBeNull: [ 'params', 'returns' ],
+    canBeNull: [ 'params', 'returns', 'values' ],
     isArray: [ 'examples' ]
   },
 
@@ -186,6 +169,24 @@ const objectTypes = {
     required: [ 'desc' ]
   },
 
+  // special type, not common
+  File: {
+    props: [ 'desc', 'required' ],
+    required: [ 'desc' ]
+  },
+
+  // special type, not common
+  FileList: {
+    props: [ 'desc', 'required' ],
+    required: [ 'desc' ]
+  },
+
+  // special type, not common
+  MediaElement: {
+    props: [ 'desc', 'examples' ],
+    required: [ 'desc' ]
+  },
+
   // component only
   slots: {
     props: [ 'desc', 'link', 'addedIn', 'applicable' ],
@@ -207,10 +208,18 @@ const objectTypes = {
   },
 
   methods: {
-    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'applicable', 'values' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
-    isObject: [ 'params', 'returns' ]
+    isObject: [ 'params', 'returns' ],
+    isArray: [ 'values' ]
+  },
+
+  computed: {
+    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'applicable' ],
+    required: [ 'desc' ],
+    isBoolean: [ 'tsInjectionPoint' ],
+    isObject: [ 'returns' ]
   },
 
   // plugin only
@@ -264,7 +273,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
 
   const def = objectTypes[type]
 
-  for (let prop in obj) {
+  for (const prop in obj) {
     if ([ 'type', '__exemption' ].includes(prop)) {
       continue
     }
@@ -315,6 +324,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
         process.exit(1)
       }
     })
+
     def.isObject && def.isObject.forEach(prop => {
       if (obj[prop] && Object(obj[prop]) !== obj[prop]) {
         logError(`${banner}/"${prop}" is not an Object`)
@@ -323,6 +333,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
         process.exit(1)
       }
     })
+
     def.isArray && def.isArray.forEach(prop => {
       if (obj[prop] && !Array.isArray(obj[prop])) {
         logError(`${banner}/"${prop}" is not an Array`)
@@ -345,7 +356,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
   ;[ 'params', 'definition', 'scope', 'props' ].forEach(prop => {
     if (!obj[prop]) { return }
 
-    for (let item in obj[prop]) {
+    for (const item in obj[prop]) {
       parseObject({
         banner: `${banner}/"${prop}"/"${item}"`,
         api: api[itemName][prop],
@@ -392,7 +403,7 @@ function parseAPI (file, apiType) {
   }
 
   // "props", "slots", ...
-  for (let type in api) {
+  for (const type in api) {
     if (!topSections[apiType].includes(type)) {
       logError(`${banner} "${type}" is not recognized for a ${apiType}`)
       process.exit(1)
@@ -440,7 +451,7 @@ function parseAPI (file, apiType) {
 
     const isComponent = banner.indexOf('component') > -1
 
-    for (let itemName in api[type]) {
+    for (const itemName in api[type]) {
       parseObject({
         banner: `${banner} "${type}"/"${itemName}"`,
         api: api[type],
