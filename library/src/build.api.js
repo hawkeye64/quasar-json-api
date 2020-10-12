@@ -57,28 +57,28 @@ const topSections = {
 
 const objectTypes = {
   Boolean: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isArray: [ 'examples' ]
   },
 
   String: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'transformAssetUrls', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'transformAssetUrls', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync', 'transformAssetUrls' ],
     isArray: [ 'examples', 'values' ]
   },
 
   Number: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isArray: [ 'examples', 'values' ]
   },
 
   Object: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
@@ -87,7 +87,7 @@ const objectTypes = {
   },
 
   Array: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'definition' ],
@@ -95,7 +95,7 @@ const objectTypes = {
   },
 
   Date: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
@@ -104,7 +104,7 @@ const objectTypes = {
   },
 
   Event: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
@@ -113,7 +113,7 @@ const objectTypes = {
   },
 
   Map: {
-    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     recursive: [ 'definition' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
@@ -122,7 +122,7 @@ const objectTypes = {
   },
 
   Promise: {
-    props: [ 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'definition' ],
@@ -130,7 +130,7 @@ const objectTypes = {
   },
 
   Function: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'applicable', 'values' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
     required: [ 'desc', 'params', 'returns' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'params', 'returns' ],
@@ -139,7 +139,7 @@ const objectTypes = {
   },
 
   MultipleTypes: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'params', 'returns', 'examples', 'category', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'definition', 'params', 'returns' ],
@@ -189,26 +189,26 @@ const objectTypes = {
 
   // component only
   slots: {
-    props: [ 'desc', 'link', 'addedIn', 'applicable' ],
+    props: [ 'desc', 'link', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc' ]
   },
 
   // component only
   scopedSlots: {
-    props: [ 'desc', 'link', 'scope', 'addedIn', 'applicable' ],
+    props: [ 'desc', 'link', 'scope', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'scope' ],
     isObject: [ 'scope' ]
   },
 
   // component only
   events: {
-    props: [ 'desc', 'link', 'params', 'addedIn', 'applicable' ],
+    props: [ 'desc', 'link', 'params', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc' ],
     isObject: [ 'params' ]
   },
 
   methods: {
-    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'applicable', 'values' ],
+    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
     isObject: [ 'params', 'returns' ],
@@ -216,7 +216,7 @@ const objectTypes = {
   },
 
   computed: {
-    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
     isObject: [ 'returns' ]
@@ -224,7 +224,7 @@ const objectTypes = {
 
   // plugin only
   quasarConfOptions: {
-    props: [ 'propName', 'definition', 'link', 'addedIn' ],
+    props: [ 'propName', 'definition', 'link', 'addedIn', 'deprecated', 'removedIn' ],
     required: [ 'propName', 'definition' ]
   }
 }
