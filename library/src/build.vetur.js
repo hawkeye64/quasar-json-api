@@ -38,10 +38,20 @@ function getAttributes (data) {
   return attrs
 }
 
+function stripRemovedIn (props) {
+  const value = {}
+  Object.keys(props).forEach(prop => {
+    if (props[prop].removedIn === void 0) {
+      value[prop] = props[prop] 
+    }
+  })
+  return value
+}
+
 module.exports = function ({ components }) {
   const data = components.map(c => ({
     name: kebabCase(c.name),
-    props: c.api.props || {}
+    props: stripRemovedIn(c.api.props) || {}
   }))
 
   try {
