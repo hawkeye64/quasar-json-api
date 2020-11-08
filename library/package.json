@@ -1,6 +1,6 @@
 {
   "name": "quasar-json-api",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Jeff Galbraith <jeff@quasar.dev>",
   "description": "Normalizes and validates JSON API for 3rd-party Quasar Components, Directives, Mixins and Plugins uing the Quasar UI Kit",
   "license": "MIT",
