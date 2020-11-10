@@ -6,10 +6,15 @@
 [![npm](https://img.shields.io/npm/dt/quasar-json-api.svg)](https://www.npmjs.com/package/quasar-json-api)
 
 # Description
-The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, Mixin or Plugin.
+The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, or Mixin.
 
-The output of the results will be placed in the **dist/api** folder.
+As well, it'll create `Vetur` compliant files, so that when using `vscode` with `vetur` you get suggestions and completions.
 
+(New **v1.2.0**): Not only that, but `quasar-json-api` can generate your typescript definitions automatically inferred by your JSON API. More on this below.
+
+The output of the results will be placed in the **dist/api**, **dist/vetur** and **dist/types** folders, respectively.
+
+**Note:** starting with **v1.2.0** you no longer have to add the code to create the specific folders in `./build/index.js`. If you have this, then you can safely remove it.
 
 # Usage
 
@@ -28,16 +33,37 @@ const path = require('path')
 global.rootDir = path.resolve(__dirname, '..')
 global.distDir = path.resolve(__dirname, '../dist')
 
-require('quasar-json-api')()
+require('quasar-json-api')({
+  buildVetur: true,
+  buildTypes: true
+})
 ```
+
+Notice the `options`? This is where you can turn on/off particular builds. By default, `buildVetur` is `true` for backwards compatibility. However, by default, the `buildTypes` is `false` and must be explicitly turned on.
 
 In your `build/script.javascript.js` find the `build(builds)` command and modify as follows:
 
 ```js
 build(builds)
   .then(() => {
-    require('./build.api')
+    require('./build.api.js')
   })
+```
+
+In your `package.json`, add the following for Vetur:
+
+```json
+  "vetur": {
+    "tags": "dist/vetur/tags.json",
+    "attributes": "dist/vetur/attributes.json"
+  },
+```
+
+In your `package.json`, add the following for Types:
+
+```json
+  "typings": "dist/types/index.d.ts",
+  },
 ```
 
 That's it!
@@ -52,21 +78,9 @@ If you want to set up a script in your `package.json`, you can add the following
 
 ```json
   "scripts": {
-    "lint": "eslint --ext .js,.vue src",
-    "lint-fix": "eslint --ext .js,.vue src --fix",
-    "dev": "cd dev && yarn dev && cd ..",
-    "dev:umd": "yarn build && node build/script.open-umd.js",
-    "dev:ssr": "cd dev && yarn 'dev:ssr' && cd ..",
-    "dev:ios": "cd dev && yarn 'dev:ios' && cd ..",
-    "dev:android": "cd dev && yarn 'dev:android' && cd ..",
-    "dev:electron": "cd dev && yarn 'dev:electron' && cd ..",
-    "build": "node build/index.js",
-    "build:js": "node build/script.javascript.js",
-    "build:css": "node build/script.css.js",
     "build:api": "node build/build.api.js"
   },
 ```
-Notice the addition of the last line.
 
 Now, you can concentrate on any JSON API issues you have by running `yarn build:api`.
 
