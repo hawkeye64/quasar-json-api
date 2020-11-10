@@ -1,10 +1,17 @@
 const
   path = require('path')
+  fs = require('fs')
 
 const
   { logError, writeFile, kebabCase } = require('./build.utils')
   rootDir = global.rootDir,
+  distRoot = path.resolve(rootDir, './dist/vetur'),
   resolvePath = file => path.resolve(rootDir + '/dist/vetur', file)
+
+// if destination folder does not exist, create it now
+if (fs.existsSync(distRoot) === false) {
+  fs.mkdirSync(distRoot)
+}
 
 function getTags (data) {
   const tags = {}
@@ -48,7 +55,7 @@ function stripRemovedIn (props) {
   return value
 }
 
-module.exports = function ({ components }) {
+module.exports.generate = function ({ components }) {
   const data = components.map(c => ({
     name: kebabCase(c.name),
     props: stripRemovedIn(c.api.props) || {}

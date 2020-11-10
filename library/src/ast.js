@@ -15,12 +15,12 @@ module.exports.evaluate = (source, lookup, callback) => {
             let definition = null
             if (propName === 'props' && innerProp.value) {
               definition = getPropDefinition(innerProp)
-          }
+            }
             innerProp.key !== void 0 && callback(propName, innerProp.key.name, definition)
+          }
         }
       }
     }
-  }
   }
 }
 
@@ -32,7 +32,7 @@ function getPropDefinition (innerProp) {
   else if (innerProp.value.type === 'ArrayExpression') {
     definition.type = innerProp.value.elements.map(e => e.name)
   }
-  else {
+  else if (innerProp.value.type !== 'ConditionalExpression') {
     const jsonContent = innerProp.value.properties.map(p => {
       let value
       if (p.value) {
@@ -41,17 +41,17 @@ function getPropDefinition (innerProp) {
         }
         else if (p.value.type === 'ArrowFunctionExpression') {
           if (p.value.body.type === 'ArrayExpression') {
-            value = `[${p.value.body.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
+            value = `[${p.value.body.elements.map(e => (e.extra && e.extra.raw) || e.value).join(', ')}]`
           }
           else if (!p.value.body.callee || !p.value.body.callee.object || !p.value.body.callee.object.elements) {
             return ''
           }
           else {
-            value = `[${p.value.body.callee.object.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
+            value = `[${p.value.body.callee.object.elements.map(e => (e.extra && e.extra.raw) || e.value).join(', ')}]`
           }
         }
         else if (p.value.type === 'FunctionExpression') {
-          value = `[${p.value.body.body.argument.callee.object.elements.map(e => e.extra && e.extra.raw || e.value).join(', ')}]`
+          value = `[${p.value.body.body.argument.callee.object.elements.map(e => (e.extra && e.extra.raw) || e.value).join(', ')}]`
         }
       }
       else {

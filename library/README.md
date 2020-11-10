@@ -6,11 +6,15 @@
 [![npm](https://img.shields.io/npm/dt/quasar-json-api.svg)](https://www.npmjs.com/package/quasar-json-api)
 
 # Description
-The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, Mixin or Plugin.
+The `quasar-json-api` is a library to **normalize** and **validate** your JSON Api for a Quasar Component, Directive, or Mixin.
 
 As well, it'll create `Vetur` compliant files, so that when using `vscode` with `vetur` you get suggestions and completions.
 
-The output of the results will be placed in the **dist/api** and **dist/vetur** folders, respectively.
+(New **v1.2.0**): Not only that, but `quasar-json-api` can generate your typescript definitions automatically inferred by your JSON API. More on this below.
+
+The output of the results will be placed in the **dist/api**, **dist/vetur** and **dist/types** folders, respectively.
+
+**Note:** starting with **v1.2.0** you no longer have to add the code to create the specific folders in `./build/index.js`. If you have this, then you can safely remove it.
 
 
 # Usage
@@ -30,32 +34,36 @@ const path = require('path')
 global.rootDir = path.resolve(__dirname, '..')
 global.distDir = path.resolve(__dirname, '../dist')
 
-require('quasar-json-api')()
+require('quasar-json-api')({
+  buildVetur: true,
+  buildTypes: true
+})
 ```
 
-In your `build/index.js` find the `createFolder('dist')` command and modify as follows:
-
-```js
-createFolder('dist')
-createFolder('dist/api')
-createFolder('dist/vetur')
-```
+Notice the `options`? This is where you can turn on/off particular builds. By default, `buildVetur` is `true` for backwards compatibility. However, by default, the `buildTypes` is `false` and must be explicitly turned on.
 
 In your `build/script.javascript.js` find the `build(builds)` command and modify as follows:
 
 ```js
 build(builds)
   .then(() => {
-    require('./build.api')
+    require('./build.api.js')
   })
 ```
 
-In your `package.json, add the following:
+In your `package.json`, add the following for Vetur:
 
 ```json
   "vetur": {
     "tags": "dist/vetur/tags.json",
     "attributes": "dist/vetur/attributes.json"
+  },
+```
+
+In your `package.json`, add the following for Types:
+
+```json
+  "typings": "dist/types/index.d.ts",
   },
 ```
 
@@ -110,24 +118,29 @@ Example:
 ```
 
 Available keys for described objects are:
-1. type (required) | [String | Array]
-2. category (required) | String
-3. desc (required) | String
-4. applicable | [String | Array]
-5. examples (required, unless type is Boolean) | Array
-6. required | Boolean
-7. values | Array
-8. definition | Object
-9. reactive | Boolean
-10. sync | Boolean
-11. link | String (URL)
-12. addedIn | String
-13. params | Object
-14. returns | Any
-15. addedIn | String
-16. scope | Object (scopedSlots only)
+1. type (required) | [String | Array | Object]
+2. tsType | String
+3. category (required) | String
+4. desc (required) | String
+5. applicable | [String | Array]
+6. examples (required, unless type is Boolean) | Array
+7. required | Boolean
+8. values | Array
+9. definition | Object
+10. reactive | Boolean
+11. sync | Boolean
+12. link | String (URL)
+13. addedIn | String
+14. params | Object
+15. returns | Any
+16. addedIn | String
+17. deprecated | String
+18. removedIn | String
+19. scope | Object (scopedSlots only)
 
 Not all keys are applicable to all the top-level blocks.
+
+Also, notice the "tsType" which is new for building typescript definitions. More about this below.
 
 ## Types
 
@@ -302,6 +315,7 @@ Let's describe a slot and scopedSlot:
     "scope": {
       "data": {
         "type": "Object",
+        "tsType": "Timestamp",
         "desc": "Timestamp object",
         "__exemption": [ "examples" ]
       }
@@ -315,6 +329,7 @@ Let's describe a slot and scopedSlot:
     "scope": {
       "data": {
         "type": "Object",
+        "tsType": "Timestamp",
         "desc": "Timestamp object",
         "__exemption": [ "examples" ]
       }
@@ -327,7 +342,7 @@ Let's describe a slot and scopedSlot:
 
 Notice for **scopedSlots** the use of the **scope** key.
 
-## Methods and Comp[uted]
+## Methods and Computed
 
 When a JSON file is parsed, a corresponding JS file of the same name is located. If found, this file is also parsed. When the **methods** or **computed** sections are parsed, it looks for __private__ vs __public__ methods. Private methods/computed should start with two underscores (**__**). If a method or computed is found, that is public and not described in your JSON API, this will cause an error. Either make the method/computed private or add a section for it in your JSON API.
 
@@ -352,13 +367,112 @@ Here is an example of describing a method:
   },
 ```
 
+# Typescript Definitions
+
+(Optional) In the `ui` folder create a `types` folder, sibling to the `src` folder. Anything in this folder will be copied over to your `dist/types` folder. Here, you can add a `types.d.ts` file. You would put any additional type defintions here that are used in your JSON API with the `tsType` JSON API key.
+
+This is an example from QCalendar
+```ts
+export interface Timestamp {
+  date: string;
+  time: string;
+  year: number;
+  month: number;
+  day: number;
+  weekday: number;
+  hour: number;
+  minute: number;
+  doy: number;
+  workweek: number;
+  hasDay: boolean;
+  hasTime: boolean;
+  past: boolean;
+  current: boolean;
+  future: boolean;
+  disabled: boolean;
+}
+
+export type TimestampArray = Timestamp[]
+export type TimestampOrNull = Timestamp | null
+
+export type TimestampFormatter = (timestamp: Timestamp, short: boolean) => string;
+export type TimestampFormatOptions = (timestamp: Timestamp, short: boolean) => TimestampFormatter;
+export type TimestampMoveOperation = (timestamp: Timestamp) => Timestamp;
+
+export interface TimeObject {
+  hour: number,
+  minute: number
+}
+
+export type TimeObjectOrNumberOrString = TimeObject | number | string
+
+export interface AddToDateOptions {
+  year?: number | string,
+  month?: number | string,
+  day?: number | string,
+  hour?: number | string,
+  minute?: number | string,
+}
+
+export interface ColumnObject {
+  id?: number | string,
+  key?: number | string
+}
+
+export type ColumnObjectArray = ColumnObject[]
+
+export interface ResourceObject {
+  label?: string,
+  height?: number,
+  expanded?: boolean,
+  children?: ResourceObjectArray
+}
+
+export type ResourceObjectArray = ResourceObject[]
+```
+
+These are all used in the QCalendar.json file. When the parser sees a `"tsType": "Timestamp"` defined on an item (where it'd also have `"type": "Object"`), then `Timestamp` will be imported from your `types.d.ts` file. You you don't provide a `tsType`, then definitions with Object or Array will get a type of `LooseDictionary`.
+
+And don't worry, all of your types will also be automatically exported for `types.d.ts` from within the `index.d.ts` file. So, if you have additional files in the `types` folder, then make sure you do this from your `types.d.ts` so everything is exported properly:
+
+```ts
+export * from './your-file-name.d.ts'
+```
+
+Needless to say, DO NOT add an `index.d.ts` in your `types` folder, otherwise it will be overwritten. Other files created, that you should avoid colliding with, are: `ts-helpers.d.ts`, `tsconfig.json` and `vue.d.ts`.
+
+One last item to mention. Avoid using arrays on `tsType`. Instead, in your `types.d.ts`, export a `type` that combines your types, like this, into a single type:
+
+```ts
+export type TimeObjectOrNumberOrString = TimeObject | number | string
+```
+
+And then use the exported type in your JSON API. This will then be imported into `index.d.ts` from your `types.d.ts`.
+
+Additionally, the first time it is run, a `types` will be added to your `package.json`:
+
+```json
+"typings": "dist/types/index.d.ts",
+```
+
+If this already exists, it will **not** be overwritten. Meaning if it is incorrect, your type definitions will not work correctly.
+
+## Typescript Definition Issues
+
+Before releasing your package, the first time you generate typescript definitions, or any time you build after a subsequent change to your JSON API, you should inspect the `dist/types/index.d.ts` for issues or descrepancies and correct any that you may have.
+
+---
+
 # JSON API Examples
+
 - [QCalendar](https://raw.githubusercontent.com/quasarframework/quasar-ui-qcalendar/dev/ui/src/components/QCalendar.json)
 - [QMarkdown](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmarkdown/dev/ui/src/components/QMarkdown.json)
 - [QMediaPlayer](https://raw.githubusercontent.com/quasarframework/quasar-ui-qmediaplayer/dev/ui/src/components/QMediaPlayer.json)
 
 # Donate
+
 If you appreciate the work that went into this, please consider donating to [Quasar](https://donate.quasar.dev) or [Jeff](https://github.com/sponsors/hawkeye64).
 
 # License
+
 MIT (c) Jeff Galbraith <jeff@quasar.dev>

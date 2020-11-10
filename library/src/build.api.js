@@ -7,10 +7,15 @@ const
 const
   root = global.rootDir,
   resolvePath = file => path.resolve(root, file),
-  dest = path.join(root, 'dist/api'),
+  distRoot = path.resolve(rootDir, './dist/api'),
   extendApi = require('./api.extends.json'),
   { logError, writeFile, kebabCase } = require('./build.utils'),
   ast = require('./ast')
+
+// if destination folder does not exist, create it now
+if (fs.existsSync(distRoot) === false) {
+  fs.mkdirSync(distRoot)
+}
 
 function getMixedInAPI (api, mainFile) {
   api.mixins.forEach(mixin => {
@@ -21,7 +26,7 @@ function getMixedInAPI (api, mainFile) {
         mixinFile = require.resolve(mixinFile)
       }
       catch (e) {
-        logError(`⚠️  Cannot resolve mixin file: ${mixinFile}`)
+        logError(`⚠️  build.api.js: Cannot resolve mixin file: ${mixinFile}`)
         process.exit(1)
       }
     }
@@ -30,7 +35,7 @@ function getMixedInAPI (api, mainFile) {
     }
 
     if (!fs.existsSync(mixinFile)) {
-      logError(`⚠️  ${path.relative(root, mainFile)} -> no such mixin ${mixin}`)
+      logError(`⚠️  build.api.js: ${path.relative(root, mainFile)} -> no such mixin ${mixin}`)
       process.exit(1)
     }
 
@@ -49,9 +54,9 @@ function getMixedInAPI (api, mainFile) {
 }
 
 const topSections = {
-  plugin: [ 'meta', 'injection', 'quasarConfOptions', 'props', 'methods' ],
-  component: [ 'meta', 'quasarConfOptions', 'behavior', 'props', 'slots', 'scopedSlots', 'events', 'methods', 'computed' ],
-  directive: [ 'meta', 'quasarConfOptions', 'value', 'arg', 'modifiers' ],
+  plugin: [ 'meta', 'injection', 'quasarConfOptions', 'addedIn', 'deprecated', 'removedIn', 'props', 'methods' ],
+  component: [ 'meta', 'behavior', 'quasarConfOptions', 'addedIn', 'deprecated', 'removedIn', 'props', 'slots', 'scopedSlots', 'events', 'methods', 'computed' ],
+  directive: [ 'meta', 'quasarConfOptions', 'addedIn', 'deprecated', 'removedIn', 'value', 'arg', 'modifiers' ],
   util: [ 'meta', 'methods', 'constants' ]
 }
 
@@ -87,7 +92,7 @@ const objectTypes = {
   },
 
   Array: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'definition' ],
@@ -130,7 +135,7 @@ const objectTypes = {
   },
 
   Function: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'default', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
     required: [ 'desc', 'params', 'returns' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'params', 'returns' ],
@@ -139,7 +144,7 @@ const objectTypes = {
   },
 
   MultipleTypes: {
-    props: [ 'tsInjectionPoint', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'required', 'reactive', 'sync', 'link', 'values', 'default', 'definition', 'params', 'returns', 'examples', 'category', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc', 'examples' ],
     isBoolean: [ 'tsInjectionPoint', 'required', 'reactive', 'sync' ],
     isObject: [ 'definition', 'params', 'returns' ],
@@ -177,19 +182,19 @@ const objectTypes = {
 
   // special type, not common
   FileList: {
-    props: [ 'desc', 'required' ],
+    props: [ 'desc', 'required', 'category', 'examples', 'addedIn', 'deprecated', 'removedIn' ],
     required: [ 'desc' ]
   },
 
   // special type, not common
   MediaElement: {
-    props: [ 'desc', 'examples' ],
+    props: [ 'desc', 'required', 'category', 'examples', 'addedIn', 'deprecated', 'removedIn' ],
     required: [ 'desc' ]
   },
 
   // component only
   slots: {
-    props: [ 'desc', 'link', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
+    props: [ 'desc', 'link', 'applicable', 'addedIn', 'deprecated', 'removedIn' ],
     required: [ 'desc' ]
   },
 
@@ -208,10 +213,10 @@ const objectTypes = {
   },
 
   methods: {
-    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
+    props: [ 'tsInjectionPoint', 'tsType', 'desc', 'examples', 'link', 'params', 'returns', 'addedIn', 'deprecated', 'removedIn', 'applicable', 'values' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
-    isObject: [ 'params', 'returns' ],
+    isObject: [ 'tsType', 'params', 'returns' ],
     isArray: [ 'values' ]
   },
 
@@ -219,7 +224,8 @@ const objectTypes = {
     props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'deprecated', 'removedIn', 'applicable' ],
     required: [ 'desc' ],
     isBoolean: [ 'tsInjectionPoint' ],
-    isObject: [ 'returns' ]
+    isObject: [ 'tsType', 'params', 'returns' ],
+    isArray: [ 'values' ]
   },
 
   // plugin only
@@ -367,6 +373,36 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
   })
 }
 
+// https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+// https://regex101.com/r/vkijKf/1/
+const SEMANTIC_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+
+function isValidVersion (version) {
+  return !!SEMANTIC_REGEX.exec(version)
+}
+
+function handleValidVersion (type, api, banner) {
+  if (api[type] === void 0 || api[type].length === 0) {
+    logError(`${banner} "${type}" is empty`)
+    console.log()
+    process.exit(1)
+  }
+
+  const value = api[type]
+
+  if (value.charAt(0) !== 'v') {
+    logError(`${banner} "${type}" value (${value}) must start with "v"`)
+    console.log()
+    process.exit(1)
+  }
+
+  if (isValidVersion(value.slice(1)) !== true) {
+    logError(`${banner} "${type}" value (${value}) must follow sematic versioning`)
+    console.log()
+    process.exit(1)
+  }
+}
+
 function convertBehavior (api, banner) {
   const behavior = {}
 
@@ -419,6 +455,11 @@ function parseAPI (file, apiType) {
 
     if (type === 'behavior') {
       convertBehavior(api, banner)
+      continue
+    }
+
+    if (type === 'addedIn' || type === 'deprecated' || type === 'removedIn') {
+      handleValidVersion(type, api, banner)
       continue
     }
 
@@ -479,13 +520,7 @@ function orderAPI (api, apiType) {
   return ordered
 }
 
-const astExceptions = global.astExceptions || {
-  'QCircularProgress.json': {
-    props: {
-      instantFeedback: true
-    }
-  },
-
+const astExceptions = {
   'QTable.json': {
     methods: {
       getBody: true
@@ -524,7 +559,7 @@ function fillAPI (apiType) {
   return file => {
     const
       name = path.basename(file),
-      filePath = path.join(dest, name)
+      filePath = path.join(distRoot, name)
 
     const api = orderAPI(parseAPI(file, apiType), apiType)
 
@@ -668,12 +703,12 @@ module.exports.generate = function () {
       .map(fillAPI('directive'))
 
     const components = glob.sync(resolvePath('src/components/**/*.json'))
-    .filter(file => !path.basename(file).startsWith('__'))
-    .map(fillAPI('component'))
+      .filter(file => !path.basename(file).startsWith('__'))
+      .map(fillAPI('component'))
 
     const utils = glob.sync(resolvePath('src/utils/**/*.json'))
-    .filter(file => !path.basename(file).startsWith('__'))
-    .map(fillAPI('util'))
+      .filter(file => !path.basename(file).startsWith('__'))
+      .map(fillAPI('util'))
 
     // writeTransformAssetUrls(components)
 
