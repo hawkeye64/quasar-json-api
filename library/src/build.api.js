@@ -1,7 +1,7 @@
 const
   glob = require('glob'),
   path = require('path'),
-  merge = require('webpack-merge'),
+  { merge } = require('webpack-merge'),
   fs = require('fs')
 
 const
