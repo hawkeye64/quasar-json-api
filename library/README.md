@@ -34,8 +34,11 @@ global.rootDir = path.resolve(__dirname, '..')
 global.distDir = path.resolve(__dirname, '../dist')
 
 require('quasar-json-api')({
-  buildVetur: true,
-  buildTypes: true
+  buildVetur: true,  // optional
+  buildTypes: true,  // optional
+  forcedTypes: [     // optional
+    'Timestamp'      // force type def to import from your types.d.ts
+  ]
 })
 ```
 
@@ -73,6 +76,8 @@ When you build your Component or Directive via `yarn build` (from your UI kit te
 One more item to disclose. The JSON file should have the same name as your component so it can validate against the source after the normalization is done.
 
 For instance, if your component or directive is **MyComponent.js**, then your JSON API file will be called **MyComponent.json**.
+
+_Note:_ Files atarting with two underscores (`__`) are ignored.
 
 If you want to set up a script in your `package.json`, you can add the following:
 
@@ -479,12 +484,15 @@ export interface ResourceObject {
 export type ResourceObjectArray = ResourceObject[]
 ```
 
-These are all used in the QCalendar.json file. When the parser sees a `"tsType": "Timestamp"` defined on an item (where it'd also have `"type": "Object"`), then `Timestamp` will be imported from your `types.d.ts` file. You you don't provide a `tsType`, then definitions with Object or Array will get a type of `LooseDictionary`.
+These are all used in the QCalendar.json file. When the parser sees a `"tsType": "Timestamp"` defined on an item (where it'd also have `"type": "Object"`), then `Timestamp` will be imported from your `types.d.ts` file. You you don't provide a `tsType`, then definitions with Object or Array will get a type of `LooseDictionary`, if they cannot be built from the JSON API "definition" schema.
 
-And don't worry, all of your types will also be automatically exported for `types.d.ts` from within the `index.d.ts` file. So, if you have additional files in the `types` folder, then make sure you do this from your `types.d.ts` so everything is exported properly:
+And don't worry, all of your types will also be automatically exported for `types.d.ts` from within the `index.d.ts` file. However, if you found something is missing, you can force it with the option key `forcedTypes` which is an array of types to import from your `types.d.ts`.
+
+
+So, if you have additional files in the `types` folder, then make sure you do this from your `types.d.ts` so everything is exported properly:
 
 ```ts
-export * from './your-file-name.d.ts'
+export * from './your-file-name' // your-file-name.d.ts
 ```
 
 Needless to say, DO NOT add an `index.d.ts` in your `types` folder, otherwise it will be overwritten. Other files created, that you should avoid colliding with, are: `ts-helpers.d.ts`, `tsconfig.json` and `vue.d.ts`.
@@ -493,6 +501,7 @@ One last item to mention. Avoid using arrays on `tsType`. Instead, in your `type
 
 ```ts
 export type TimeObjectOrNumberOrString = TimeObject | number | string
+export type TimeObjectOrNumberOrStringArray = TimeObjectOrNumberOrString[]
 ```
 
 And then use the exported type in your JSON API. This will then be imported into `index.d.ts` from your `types.d.ts`.
