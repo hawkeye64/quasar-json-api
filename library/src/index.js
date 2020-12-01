@@ -18,13 +18,18 @@ module.exports = function (options) {
     buildTypes = options.buildTypes
   }
 
+  let forcedTypes = []
+  if (options !== void 0 && Array.isArray(options.forcedTypes) && options.forcedTypes.length > 0) {
+    forcedTypes = options.forcedTypes
+  }
+
   return require('./build.api.js').generate()
     .then(data => {
       if (buildVetur === true) {
         require('./build.vetur.js').generate(data)
       }
       if (buildTypes === true) {
-        require('./build.types.js').generate(data)
+        require('./build.types.js').generate(data, forcedTypes)
       }
   })
 }

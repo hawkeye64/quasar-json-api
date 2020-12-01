@@ -125,7 +125,7 @@ function getPropDefinitions (propDefs, required, docs = false, areMethodParams =
   return defs
 }
 
-function getMethodDefinition (key, methodDef, required) {
+function getMethodDefinition (key, methodDef, required, isUtil = false) {
   let def = `/**\n * ${methodDef.desc}\n`
   if (methodDef.params) {
     def += `${Object.entries(methodDef.params).map(([name, paramDef]) => ` * @param ${name} ${paramDef.desc}`).join('\n')}\n`
@@ -136,7 +136,7 @@ function getMethodDefinition (key, methodDef, required) {
     def += ` * @returns ${returns.desc}\n`
   }
 
-  def += ` */\n${key}`
+  def += ` */\n${isUtil ? 'export function ' + key : key}`
 
   if (methodDef.tsType !== void 0) {
     def += `: ${methodDef.tsType}`
@@ -272,7 +272,7 @@ function addToExtraInterfaces (def, required) {
   }
 }
 
-function writeIndexDTS (apis) {
+function writeIndexDTS (apis, forcedTypes) {
   const contents = []
   const quasarTypeContents = []
   const components = []
@@ -287,8 +287,8 @@ function writeIndexDTS (apis) {
   //  but as a normal comment
   // On Vue CLI projects `@quasar/app` isn't available,
   //  we ignore the "missing package" error because it's the intended behaviour
-  writeLine(contents, `// @ts-ignore`)
-  writeLine(contents, `/// <reference types="@quasar/app" />`)
+  // writeLine(contents, `// @ts-ignore`)
+  // writeLine(contents, `/// <reference types="@quasar/app" />`)
   writeLine(contents, `import Vue, { VueConstructor } from 'vue'`)
   writeLine(contents, `import { LooseDictionary } from './ts-helpers'`)
 
@@ -303,7 +303,9 @@ function writeIndexDTS (apis) {
 
 
   apis.forEach(api => {
-    writeLine(quasarTypeContents, `export as namespace ${api.name}`)
+    if (api.api.type !== 'util') {
+      writeLine(quasarTypeContents, `export as namespace ${api.name}`)
+    }
   })
 
   const injections = {}
@@ -311,41 +313,43 @@ function writeIndexDTS (apis) {
   apis.forEach(data => {
     const content = data.api
     const typeName = data.name
+    const isUtil = content.type === 'util'
 
-    const extendsVue = (content.type === 'component' || content.type === 'mixin')
-    const typeValue = `${extendsVue ? `VueConstructor<${typeName}>` : typeName}`
-    // Add Type to the appropriate section of types
-    const propTypeDef = `${typeName}?: ${typeValue}`
-    if (content.type === 'component') {
-      write(components, propTypeDef)
-    }
-    else if (content.type === 'directive') {
-      write(directives, propTypeDef)
-    }
-    else if (content.type === 'plugin') {
-      write(plugins, propTypeDef)
-    }
-    else if (content.type === 'util') {
-      write(utils, propTypeDef)
-    }
+    if (isUtil !== true) {
+      const extendsVue = (content.type === 'component' || content.type === 'mixin')
+      const typeValue = `${extendsVue ? `VueConstructor<${typeName}>` : typeName}`
+      // Add Type to the appropriate section of types
+      const propTypeDef = `${typeName}?: ${typeValue}`
+      if (content.type === 'component') {
+        write(components, propTypeDef)
+      }
+      else if (content.type === 'directive') {
+        write(directives, propTypeDef)
+      }
+      else if (content.type === 'plugin') {
+        write(plugins, propTypeDef)
+      }
 
-    // Declare class
-    writeLine(quasarTypeContents, `export const ${typeName}: ${extendsVue ? `VueConstructor<${typeName}>` : typeName}`)
-    writeLine(contents, `export interface ${typeName} ${extendsVue ? 'extends Vue ' : ''}{`)
+      // Declare class
+      writeLine(quasarTypeContents, `export const ${typeName}: ${extendsVue ? `VueConstructor<${typeName}>` : typeName}`)
+      writeLine(contents, `export interface ${typeName} ${extendsVue ? 'extends Vue ' : ''}{`)
 
-    // Write Props
-    const props = getPropDefinitions(content.props, content.type === 'plugin', true)
-    props.forEach(prop => writeLines(contents, prop, 1))
+      // Write Props
+      const props = getPropDefinitions(content.props, content.type === 'plugin', true)
+      props.forEach(prop => writeLines(contents, prop, 1))
+    }
 
     // Write Methods
     for (const methodKey in content.methods) {
       const method = content.methods[methodKey]
-      const methodDefinition = getMethodDefinition(methodKey, method, content.type === 'plugin')
-      writeLines(contents, methodDefinition, 1)
+      const methodDefinition = getMethodDefinition(methodKey, method, content.type === 'plugin', isUtil)
+      writeLines(contents, methodDefinition, isUtil !== true ? 1 : 0)
     }
 
     // Close class declaration
-    writeLine(contents, '}')
+    if (isUtil !== true) {
+      writeLine(contents, '}')
+    }
     writeLine(contents)
 
     // Copy Injections for type declaration
@@ -365,6 +369,9 @@ function writeIndexDTS (apis) {
   })
 
   const importName = []
+  if (forcedTypes && Array.isArray(forcedTypes) && forcedTypes.length > 0) {
+    importName.push(...forcedTypes)
+  }
   Object.keys(extraInterfaces).forEach(name => {
     if (extraInterfaces[name] === void 0) {
       // If we find the symbol as part of the generated Quasar API,
@@ -442,7 +449,7 @@ function writeIndexDTS (apis) {
   writeFile(resolvePath('index.d.ts'), contents.join(''))
 }
 
-module.exports.generate = function (data) {
+module.exports.generate = function (data, forcedTypes) {
   const apis = data.plugins
     .concat(data.directives)
     .concat(data.components)
@@ -453,7 +460,7 @@ module.exports.generate = function (data) {
     copyHelpers ('tsconfig.json')
     copyHelpers ('vue.d.ts')
     copyPredefinedTypes(typeRoot)
-    writeIndexDTS(apis)
+    writeIndexDTS(apis, forcedTypes)
     UpdatePackageJson()
   }
   catch (err) {
