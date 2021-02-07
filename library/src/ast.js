@@ -6,7 +6,7 @@ module.exports.evaluate = (source, lookup, callback) => {
   const ast = recast.parse(source, { parser })
   for (const node of ast.program.body) {
     if (node.type === 'ExportDefaultDeclaration') {
-      const properties = node.declaration.properties || node.declaration.arguments[0].properties
+      const properties = node.declaration.properties || (node.declaration.arguments ? node.declaration.arguments[0].properties : [])
       for (const property of properties) {
         const propName = property.key.name
         if (lookup.includes(propName)) {
