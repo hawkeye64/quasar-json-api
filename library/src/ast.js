@@ -9,7 +9,7 @@ module.exports.evaluate = (source, lookup, callback) => {
       const properties = node.declaration.properties || (node.declaration.arguments ? node.declaration.arguments[0].properties : [])
       for (const property of properties) {
         const propName = property.key.name
-        if (lookup.includes(propName)) {
+        if (lookup.includes(propName) && property.value.properties) {
           const innerProps = property.value.properties
           for (const innerProp of innerProps) {
             let definition = null
