@@ -92,19 +92,47 @@
       "type": "String",
       "desc": "One of Quasar's embedded transitions",
       "examples": [ "fade", "slide-down" ],
-      "category": "behavior"
+      "category": "transition"
     },
 
-    "value": {
+    "model-value": {
       "desc": "Model of the component; Either use this property (along with a listener for 'input' event) OR use v-model directive",
+      "required": true,
       "category": "model"
     },
 
-    "sanitize": {
+    "html": {
       "type": "Boolean",
       "default": "false",
       "desc": "Force use of textContent instead of innerHTML to render text; Use it when the text might be unsafe (from user input)",
       "category": "behavior"
+    },
+
+    "tag": {
+      "type": "String",
+      "desc": "HTML tag to use",
+      "examples": [ "div", "span" ],
+      "category": "content"
+    },
+
+    "scroll-target": {
+      "type": [ "Element", "String" ],
+      "desc": "CSS selector or DOM element to be used as a custom scroll container instead of the auto detected one",
+      "examples": [
+        ":scroll-target=\"$refs.scrollTarget\"",
+        "scroll-target=\".scroll-target-class\"",
+        "scroll-target=\"#scroll-target-id\"",
+        "scroll-target=\"body\""
+      ],
+      "category": "behavior"
+    },
+
+    "ripple": {
+      "type": [ "Boolean", "Object" ],
+      "desc": "Configure material ripple (disable it by setting it to 'false' or supply a config object)",
+      "default": true,
+      "examples": [ false, "{ early: true, center: true, color: 'teal', keyCodes: [] }" ],
+      "category": "style"
     }
   },
 
@@ -114,14 +142,8 @@
     }
   },
 
-  "scopedSlots": {
-    "default": {
-      "desc": "Default scoped slot in the devland content of the component"
-    }
-  },
-
   "events": {
-    "input": {
+    "update:model-value": {
       "desc": "Emitted when the component needs to change the model; Is also used by v-model",
       "params": {
         "value": {
@@ -157,6 +179,10 @@
       }
     },
 
+    "after-show": {
+      "desc": "Emitted when component show animation is finished"
+    },
+
     "hide": {
       "desc": "Emitted after component has triggered hide()",
       "params": {
@@ -179,6 +205,10 @@
           "__exemption": [ "examples" ]
         }
       }
+    },
+
+    "after-hide": {
+      "desc": "Emitted when component hide animation is finished"
     },
 
     "click": {
