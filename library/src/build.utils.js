@@ -13,9 +13,9 @@ process.on('exit', code => {
     const { table } = require('table')
 
     tableData.sort((a, b) => {
-      return a[0] === b[0]
-        ? a[1] < b[1] ? -1 : 1
-        : a[0] < b[0] ? -1 : 1
+      return a[ 0 ] === b[ 0 ]
+        ? a[ 1 ] < b[ 1 ] ? -1 : 1
+        : a[ 0 ] < b[ 0 ] ? -1 : 1
     })
 
     tableData.unshift([
@@ -84,7 +84,7 @@ function getDestinationInfo (dest) {
     }
   }
 
-  logError(`Unknown file type using buildUtils.writeFile: ${dest}`)
+  logError(`Unknown file type using buildUtils.writeFile: ${ dest }`)
   process.exit(1)
 }
 
@@ -96,7 +96,7 @@ module.exports.writeFile = function (dest, code, zip) {
 
   return new Promise((resolve, reject) => {
     function report (gzippedString, gzippedSize) {
-      console.log(`${banner} ${filePath.padEnd(49)} ${fileSize.padStart(8)}${gzippedString || ''}`)
+      console.log(`${ banner } ${ filePath.padEnd(49) } ${ fileSize.padStart(8) }${ gzippedString || '' }`)
 
       if (toTable) {
         tableData.push([
@@ -116,7 +116,7 @@ module.exports.writeFile = function (dest, code, zip) {
         zlib.gzip(code, (err, zipped) => {
           if (err) return reject(err)
           const size = getSize(zipped)
-          report(` (gzipped: ${size.padStart(8)})`, size)
+          report(` (gzipped: ${ size.padStart(8) })`, size)
         })
       }
       else {
@@ -130,9 +130,28 @@ module.exports.readFile = function (file) {
   return fs.readFileSync(file, 'utf-8')
 }
 
-module.exports.logError = function (err) {
+function logError (err) {
   console.error('\n' + red('[Error]'), err)
   console.log()
+}
+
+module.exports.logError = logError
+
+function uppercase (string) {
+  return string[0].toUpperCase() + string.substring(1)
+}
+
+module.exports.uppercase = uppercase
+
+module.exports.rollupUMD = function (config = {}) {
+  return {
+    name: `${name}-umd`,
+    transform (code) {
+      return {
+        code: uppercase(name) + `.${ config.type }.set(${ code.replace('export default ', '') })`
+      }
+    }
+  }
 }
 
 module.exports.kebabCase = function (str) {

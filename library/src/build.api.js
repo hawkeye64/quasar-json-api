@@ -1,16 +1,14 @@
-const
-  glob = require('glob'),
-  path = require('path'),
-  { merge } = require('webpack-merge'),
-  fs = require('fs')
+const glob = require('glob')
+const path = require('path')
+const { merge } = require('webpack-merge')
+const fs = require('fs')
 
-const
-  root = global.rootDir,
-  resolvePath = file => path.resolve(root, file),
-  distRoot = path.resolve(rootDir, './dist/api'),
-  extendApi = require('./api.extends.json'),
-  { logError, writeFile, kebabCase } = require('./build.utils'),
-  ast = require('./ast')
+const root = global.rootDir
+const resolvePath = file => path.resolve(root, file)
+const distRoot = path.resolve(rootDir, './dist/api')
+const extendApi = require('./api.extends.json')
+const { logError, writeFile, kebabCase } = require('./build.utils')
+const ast = require('./ast')
 
 const slotRegex = /\(slots\[['`](\S+)['`]\]|\(slots\.([A-Za-z]+)|hSlot\(this, '(\S+)'|hUniqueSlot\(this, '(\S+)'|hMergeSlot\(this, '(\S+)'|hMergeSlotSafely\(this, '(\S+)'/g
 
@@ -37,13 +35,14 @@ function getMixedInAPI (api, mainFile) {
     }
 
     if (!fs.existsSync(mixinFile)) {
-      logError(`⚠️  build.api.js: ${path.relative(root, mainFile)} -> no such mixin ${mixin}`)
+      logError(`⚠️  build.api.js: ${ path.relative(root, mainFile) } -> no such mixin ${ mixin }`)
       process.exit(1)
     }
 
     const content = require(mixinFile)
 
     api = merge(
+      {},
       content.mixins !== void 0
         ? getMixedInAPI(content, mixinFile)
         : content,
@@ -230,13 +229,13 @@ const objectTypes = {
     isArray: [ 'values' ]
   },
 
-  computed: {
-    props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'applicable', 'internal' ],
-    required: [ 'desc' ],
-    isBoolean: [ 'tsInjectionPoint' ],
-    isObject: [ 'tsType', 'params', 'returns' ],
-    isArray: [ 'values' ]
-  },
+  // computed: {
+  //   props: [ 'tsInjectionPoint', 'desc', 'examples', 'link', 'returns', 'addedIn', 'applicable', 'internal' ],
+  //   required: [ 'desc' ],
+  //   isBoolean: [ 'tsInjectionPoint' ],
+  //   isObject: [ 'tsType', 'params', 'returns' ],
+  //   isArray: [ 'values' ]
+  // },
 
   // plugin only
   quasarConfOptions: {
@@ -255,6 +254,7 @@ function parseObject ({ banner, api, itemName, masterType, verifyCategory }) {
     }
 
     api[ itemName ] = merge(
+      {},
       extendApi[ masterType ][ obj.extends ],
       api[ itemName ]
     )
