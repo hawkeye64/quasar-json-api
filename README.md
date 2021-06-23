@@ -124,7 +124,7 @@ Another validation error you might see is:
 All functions are validated against the source. Non-public functions should start with two underscores (`__`). All public functions should be decribed in your JSON API.
 
 # Donate
-If you appreciate the work that went into this, please consider donating to [Quasar](https://donate.quasar.dev) or [Jeff](https://github.com/sponsors/hawkeye64).
+If you appreciate the work that went into this, please consider donating to [Jeff](https://github.com/sponsors/hawkeye64).
 
 # License
 MIT (c) Jeff Galbraith <jeff@quasar.dev>
