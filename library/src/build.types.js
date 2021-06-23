@@ -331,33 +331,33 @@ function writeIndexDTS (apis, forcedTypes) {
       // Write Props
       const props = getPropDefinitions(content.props, content.type === 'plugin', true)
       props.forEach(prop => writeLines(contents, prop, 1))
+    }
 
-      // Write Methods
-      for (const methodKey in content.methods) {
-        const method = content.methods[ methodKey ]
-        const methodDefinition = getMethodDefinition(methodKey, method, content.type === 'plugin', isUtil)
-        writeLines(contents, methodDefinition, isUtil !== true ? 1 : 0)
-      }
+    // Write Methods
+    for (const methodKey in content.methods) {
+      const method = content.methods[ methodKey ]
+      const methodDefinition = getMethodDefinition(methodKey, method, content.type === 'plugin', isUtil)
+      writeLines(contents, methodDefinition, isUtil !== true ? 1 : 0)
+    }
 
-      // Close class declaration
-      if (isUtil !== true) {
-        writeLine(contents, '}')
-      }
-      writeLine(contents)
+    // Close class declaration
+    if (isUtil !== true) {
+      writeLine(contents, '}')
+    }
+    writeLine(contents)
 
-      // Copy Injections for type declaration
-      if (content.type === 'plugin') {
-        if (content.injection) {
-          const injectionParts = content.injection.split('.')
-          if (!injections[ injectionParts[ 0 ] ]) {
-            injections[ injectionParts[ 0 ] ] = []
-          }
-          let def = getInjectionDefinition(injectionParts[ 1 ], content)
-          if (!def) {
-            def = `${ injectionParts[ 1 ] }: ${ typeName }`
-          }
-          injections[ injectionParts[ 0 ] ].push(def)
+    // Copy Injections for type declaration
+    if (content.type === 'plugin') {
+      if (content.injection) {
+        const injectionParts = content.injection.split('.')
+        if (!injections[ injectionParts[ 0 ] ]) {
+          injections[ injectionParts[ 0 ] ] = []
         }
+        let def = getInjectionDefinition(injectionParts[ 1 ], content)
+        if (!def) {
+          def = `${ injectionParts[ 1 ] }: ${ typeName }`
+        }
+        injections[ injectionParts[ 0 ] ].push(def)
       }
     }
   })
